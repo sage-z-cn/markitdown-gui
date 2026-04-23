@@ -416,6 +416,53 @@ class MainWindow(QMainWindow):
         btn_layout.setContentsMargins(2, 0, 2, 0)
         btn_layout.setSpacing(4)
 
+        btn_copy = QPushButton("复制")
+        btn_copy.setObjectName("btnCopy")
+        btn_copy.setFixedSize(38, 20)
+        btn_copy.setCursor(QCursor(Qt.PointingHandCursor))
+        btn_copy.setStyleSheet("""
+            QPushButton {
+                background-color: #748ffc;
+                border: 1px solid #5c7cfa;
+                border-radius: 4px;
+                color: #ffffff;
+                font-size: 12px;
+                padding: 2px 6px;
+            }
+            QPushButton:hover { background-color: #5c7cfa; }
+            QPushButton:pressed { background-color: #4c6ef5; }
+        """)
+
+        def _copy_output(of=output_file):
+            if of and os.path.isfile(of):
+                with open(of, "r", encoding="utf-8") as f:
+                    QApplication.clipboard().setText(f.read())
+                self._log(f"已复制文件内容到剪贴板: {os.path.basename(of)}")
+            else:
+                self._log("输出文件不存在，无法复制")
+
+        btn_copy.clicked.connect(lambda _, of=output_file: _copy_output(of))
+        btn_layout.addWidget(btn_copy)
+
+        btn_dir = QPushButton("目录")
+        btn_dir.setObjectName("btnDir")
+        btn_dir.setFixedSize(38, 20)
+        btn_dir.setCursor(QCursor(Qt.PointingHandCursor))
+        btn_dir.setStyleSheet("""
+            QPushButton {
+                background-color: #69db7c;
+                border: 1px solid #51cf66;
+                border-radius: 4px;
+                color: #ffffff;
+                font-size: 12px;
+                padding: 2px 6px;
+            }
+            QPushButton:hover { background-color: #51cf66; }
+            QPushButton:pressed { background-color: #40c057; }
+        """)
+        btn_dir.clicked.connect(lambda _, of=output_file: open_directory(of) if of else None)
+        btn_layout.addWidget(btn_dir)
+
         btn_reconvert = QPushButton("重试")
         btn_reconvert.setObjectName("btnReconvert")
         btn_reconvert.setFixedSize(38, 20)
@@ -453,25 +500,6 @@ class MainWindow(QMainWindow):
         """)
         btn_del.clicked.connect(lambda _, rid=record_id: self._delete_history_record(rid))
         btn_layout.addWidget(btn_del)
-
-        btn_dir = QPushButton("目录")
-        btn_dir.setObjectName("btnDir")
-        btn_dir.setFixedSize(38, 20)
-        btn_dir.setCursor(QCursor(Qt.PointingHandCursor))
-        btn_dir.setStyleSheet("""
-            QPushButton {
-                background-color: #69db7c;
-                border: 1px solid #51cf66;
-                border-radius: 4px;
-                color: #ffffff;
-                font-size: 12px;
-                padding: 2px 6px;
-            }
-            QPushButton:hover { background-color: #51cf66; }
-            QPushButton:pressed { background-color: #40c057; }
-        """)
-        btn_dir.clicked.connect(lambda _, of=output_file: open_directory(of) if of else None)
-        btn_layout.addWidget(btn_dir)
 
         self.table.setCellWidget(0, 4, btn_widget)
 
